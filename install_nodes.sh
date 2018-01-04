@@ -16,6 +16,9 @@ setup_node() {
 
     #selinux disable
     ssh $2 sudo setenforce 0
+
+    #clear yum cache
+    rm -rf /var/cache/yum
 }
 
 
