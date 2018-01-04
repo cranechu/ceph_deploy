@@ -17,9 +17,7 @@ ceph-deploy mon create-initial
 ceph-deploy admin mon0 osd0 osd1 osd2
 
 #add OSDs
-ceph-deploy osd create osd0:sdb:/dev/nvme0n1 osd0:sdc \
-                       osd1:sdb:/dev/nvme0n1 osd1:sdc \
-                       osd2:sdb:/dev/nvme0n1 osd2:sdc
+ceph-deploy osd create osd0:sdc osd1:sdc osd2:sdc
 
 #check status
 ssh mon0 sudo ceph health
