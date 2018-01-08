@@ -11,14 +11,18 @@ setup_node() {
     ssh $2 sudo hostnamectl set-hostname $2
     ssh $2 hostname
 
+    #update system
+    ssh $2 sudo yum update -y
+
     # nopassword ssh
-    ssh-copy-id $1@$2
+    ssh-copy-id -f $1@$2
 
     #selinux disable
     ssh $2 sudo setenforce 0
 
     #clear yum cache
-    rm -rf /var/cache/yum
+    sudo sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+    sudo rm -rf /var/cache/yum
 }
 
 
@@ -29,11 +33,12 @@ echo "liteon ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/liteon
 sudo chmod 0440 /etc/sudoers.d/liteon
 
 # nopassword ssh
-ssh-copy-id liteon@admin
+ssh-copy-id -f liteon@admin
 sudo hostnamectl set-hostname admin
 hostname
 
 #selinux disable
+sudo sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
 sudo setenforce 0
 
 # set host name and dns for all nodes
