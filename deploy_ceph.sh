@@ -17,14 +17,21 @@ ceph-deploy mon create-initial
 ceph-deploy admin mon0 osd0 osd1 osd2
 
 #add OSDs
-ceph-deploy osd create osd0:sdc osd1:sdc osd2:sdc
+ceph-deploy --overwrite-conf osd create osd0:/dev/sdc osd1:/dev/sdc osd2:/dev/sdc
+ceph-deploy --overwrite-conf osd activate osd0:/dev/sdc osd1:/dev/sdc osd2:/dev/sdc
+ceph-deploy --overwrite-conf config push mon0 osd0 osd1 osd2
 
 #check status
 ssh mon0 sudo ceph health
 ssh osd0 sudo ceph health
 ssh osd1 sudo ceph health
 ssh osd2 sudo ceph health
+ssh mon0 sudo ceph osd tree
 ssh mon0 sudo ceph -s
+
+#mgr
+ceph-deploy mgr create mon0:foo
+ssh mon0 sudo ceph mgr module enable dashboard #mon0:7000
 
 #RGW instance
 ceph-deploy rgw create mon0
