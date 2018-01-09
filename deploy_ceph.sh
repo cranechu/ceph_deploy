@@ -8,7 +8,7 @@ rm ceph.*
 ceph-deploy new mon0
 
 #install ceph on nodes
-ceph-deploy install --release luminous mon0 osd0 osd1 osd2
+ceph-deploy install --release luminous admin mon0 osd0 osd1 osd2
 
 #initialize the cluster
 ceph-deploy mon create-initial
