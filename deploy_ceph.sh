@@ -17,8 +17,8 @@ ceph-deploy mon create-initial
 ceph-deploy admin mon0 osd0 osd1 osd2
 
 #add OSDs
-ceph-deploy --overwrite-conf osd create osd0:/dev/sdc osd1:/dev/sdc osd2:/dev/sdc
-ceph-deploy --overwrite-conf osd activate osd0:/dev/sdc osd1:/dev/sdc osd2:/dev/sdc
+ceph-deploy --overwrite-conf osd prepare osd0:/dev/sdb osd1:/dev/sdb osd2:/dev/sdb
+ceph-deploy --overwrite-conf osd activate osd0:/dev/sdb osd1:/dev/sdb osd2:/dev/sdb
 ceph-deploy --overwrite-conf config push mon0 osd0 osd1 osd2
 
 #check status
