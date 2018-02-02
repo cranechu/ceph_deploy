@@ -41,3 +41,10 @@ print "\nDelete 'test' Pool"
 print "------------------"
 cluster.delete_pool('test')
 print "\nPool named 'test' exists: " + str(cluster.pool_exists('test'))
+
+print "\nAvailable Pools"
+print "----------------"
+pools = cluster.list_pools()
+
+for pool in pools:
+    print pool
