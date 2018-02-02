@@ -34,8 +34,28 @@ print "\nVerify 'test' Pool Exists"
 print "-------------------------"
 pools = cluster.list_pools()
 
-for pool in pools:
-    print pool
+#for pool in pools:
+#    print pool
+
+#write objects
+ioctx = cluster.open_ioctx('test')
+
+ioctx.write_full("testkey", "testvalue")
+print ioctx.read("testkey")
+
+for i in range(10000):
+    print i
+    ioctx.write_full("key2"+str(i), ("value"+str(i))*1000)
+
+ioctx.set_xattr("testkey", "lang", "en_US")
+print ioctx.get_xattr("testkey", "lang")
+
+for o in ioctx.list_objects():
+    print o.read()
+
+ioctx.remove_object("testkey")
+ioctx.close()
+
 
 #print "\nDelete 'test' Pool"
 #print "------------------"
