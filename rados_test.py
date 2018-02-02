@@ -51,7 +51,7 @@ ioctx.set_xattr("testkey", "lang", "en_US")
 print ioctx.get_xattr("testkey", "lang")
 
 for o in ioctx.list_objects():
-    print o.read()
+    print o.read()[:10]
 
 ioctx.remove_object("testkey")
 ioctx.close()
