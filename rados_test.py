@@ -25,9 +25,9 @@ pools = cluster.list_pools()
 for pool in pools:
     print pool
 
-print "\nCreate 'test' Pool"
-print "------------------"
-cluster.create_pool('test')
+#print "\nCreate 'test' Pool"
+#print "------------------"
+#cluster.create_pool('test')
 
 print "\nPool named 'test' exists: " + str(cluster.pool_exists('test'))
 print "\nVerify 'test' Pool Exists"
@@ -37,10 +37,10 @@ pools = cluster.list_pools()
 for pool in pools:
     print pool
 
-print "\nDelete 'test' Pool"
-print "------------------"
-cluster.delete_pool('test')
-print "\nPool named 'test' exists: " + str(cluster.pool_exists('test'))
+#print "\nDelete 'test' Pool"
+#print "------------------"
+#cluster.delete_pool('test')
+#print "\nPool named 'test' exists: " + str(cluster.pool_exists('test'))
 
 print "\nAvailable Pools"
 print "----------------"
