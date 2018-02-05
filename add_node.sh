@@ -50,22 +50,32 @@ setup_node() {
 }
 
 
-# nopassword sudo
-echo "liteon ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/liteon
-sudo chmod 0440 /etc/sudoers.d/liteon
-
 # set host name and dns for all nodes
-sudo bash -c "echo '10.24.48.31 admin' >> /etc/hosts"
-sudo bash -c "echo '10.24.48.44 mon0' >> /etc/hosts"
-sudo bash -c "echo '10.24.48.45 osd0' >> /etc/hosts"
-sudo bash -c "echo '10.24.48.46 osd1' >> /etc/hosts"
-sudo bash -c "echo '10.24.48.47 osd2' >> /etc/hosts"
-sudo bash -c "echo '10.24.48.23 osd3' >> /etc/hosts"
+sudo bash -c "echo '10.24.48.26 osd4' >> /etc/hosts"
 
 # copy setup to every node
-setup_node liteon admin
-setup_node liteon mon0
-setup_node liteon osd0
-setup_node liteon osd1
-setup_node liteon osd2
-setup_node liteon osd3
+setup_node liteon osd4
+
+#starting over
+ceph-deploy purge osd4
+ceph-deploy purgedata osd4
+
+#install ceph on nodes
+ceph-deploy install --release luminous osd4
+
+#copy ceph conf/key to all nodes
+ceph-deploy osd4
+
+#add OSDs
+ceph-deploy disk zap osd4:/dev/sdb
+ceph-deploy disk zap osd4:/dev/sdc
+ceph-deploy --overwrite-conf osd prepare osd4:/dev/sdb
+ceph-deploy --overwrite-conf osd prepare osd4:/dev/sdc
+ceph-deploy --overwrite-conf osd activate osd4:/dev/sdb
+ceph-deploy --overwrite-conf osd activate osd4:/dev/sdc
+ceph-deploy --overwrite-conf config push osd4
+
+#status
+ssh osd4 sudo ceph health
+ssh mon0 sudo ceph osd tree
+ssh mon0 sudo ceph -s
