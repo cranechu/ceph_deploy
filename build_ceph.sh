@@ -9,3 +9,4 @@ make -j4
 rdm
 MON=5 OSD=9 ../src/vstart.sh -d -n -x
 ./bin/ceph_test_cls_hello
+../src/stop.sh
