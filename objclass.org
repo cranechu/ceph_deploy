@@ -1,0 +1,52 @@
+#+TITLE: objclass of Ceph
+#+AUTHOR: Crane Chu
+#+DATE: 
+
+* Abstract
+This document introduces the objclass of Ceph. We also discuss its potential application, like compute storage converge to reduce the network load. We implemented the unload function of objclass for these applications. 
+
+* Introduction to the objclass of Ceph
+Ceph consists of OSD, MON and Client nodes in the cluster. RADOS is an distributed object storage built on OSD servers. Clients access RADOS through librados. Furthermore, Ceph implements object, block and file storage in the Client nodes. Server outside of Ceph cluster can access the storage cluster in traditional way of block and file. Object storage is also compatible to S3 and Swift, so users do not need to talk with RADOS directly. 
+
+However, command and data exchange between Client and OSD nodes consume a lot of network bandwidth, and impacts overall performance. So some functionalities of client-side application are moved to OSDs. Some of them can be integrated with RADOS, but not all of them. Ceph provides the objclass framework to extend functions outside of RADOS, so developer can develop and deploy functions without re-compile nor re-start the Ceph cluster. 
+
+Those standalone objclasses are provided as dynamic libraries. OSD loads these libraries, and find the symble __class_init as the main entry of the library. The library can then register its methods and filters to OSD. After that, Client can execute those methods in CEPH_OSD_OP_CALL operations, by providing objclass name and method name, along with input/output data buffer. OSD implements this extension capability in ClassHandler.
+
+The objclasses run with OSD, but they are developed outside of OSD source code tree. The loaded libraries can use facilities in objclass/class_api.cc to register class/method/filter and access data in RADOS.
+
+Current Ceph does not provide the capability to unload a library or objclass, but we think it is necessary. 
+
+* Why we need to unload the objclass
+Currently, objclass is used to extence OSD to accompany storage functions in Client servers. But objclass capability is more than that. Objclass can distribute computation into storage (OSD) nodes. 
+
+For example, you have an interesting picture, but it is low resolution. So, you want to find similar high-resolution pictures in the cluster. Normally, you implement this work in compute server, and transfer all data from storage servers to compute servers. Because there may be quite a lot of high-resolution pictures, the work requires a huge network bandwidth between compute and storage servers. With objclass capability, let us consider it in another way. We can implement the work in an objclass, and then send the objclass dynamic library to OSD servers. Finnally, we can call the methods of the objclass with that interesting picture, to search the similar high-resolution pictures in OSD clusters. Only selected pictures are sent back to compute server. 
+
+In this way, we can converge compute and storage resources, and significantly reduce the overhead on network. 
+
+In this work flow, a lot of different objclasses will be deployed and executed on OSD servers time to time. It can release resources, like memory, to unload objclass when its work is completed. Another possible reason is that, unloading the old version of objclass before upgrading to new one, the new version objclass can be automatically re-loaded in the next time of use. 
+
+In the remaining part of this document, we will focus on the unload of objclasses. 
+
+* Design
+- When to unload: determined by user, sync all clients not to use objclass after unload
+- Where to unload: all OSD (when load, send library to all OSD too)
+- How to unload: client sends RADOS command to all OSD
+- What to unload: method, filter, class, dl, all useless dependencies
+- Error: if the objclass is used by other objclasses, cannot unload
+
+* Implementation
+- keep objclass/class_api.cc as a interface between OSD and objclass
+
+* Test
+- based on cls_hello
+
+* Performance
+- load/unload speed
+
+* Example
+- same as test: cls_hello
+
+* Reference
+- Mastering Ceph, Chapter 6: Distributed Computation with Ceph RADOS Classes
+- Ceph Class Plugin, http://blog.wjin.org/posts/ceph-class-plugin.html
+- SDK FOR CEPH OBJECT CLASSES, http://docs.ceph.com/docs/master/rados/api/objclass-sdk/

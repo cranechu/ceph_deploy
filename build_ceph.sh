@@ -1,3 +1,4 @@
+sudo dnf install -y emacs-nox
 rm -rf ceph
 git clone https://github.com/ceph/ceph.git
 cd ceph
