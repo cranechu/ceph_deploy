@@ -1,7 +1,7 @@
 rm -rf ceph
 git clone https://github.com/ceph/ceph.git
 cd ceph
-git checkout tags/v13.1.1
+#git checkout tags/v13.1.1
 git submodule update --init --recursive
 ./install-deps.sh
 ./run-make-check.sh -DCMAKE_BUILD_TYPE="Debug" -DCMAKE_C_FLAGS_DEBUG="-g3 -O0 -ggdb" -DCMAKE_CXX_FLAGS_DEBUG="-g3 -O0 -ggdb" -DBUILD_SHARED_LIBS=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
